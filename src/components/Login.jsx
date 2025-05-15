@@ -1,6 +1,8 @@
 import React from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
+
+import { auth, db } from "../firebase/firebaseConfig";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 function Login() {
   const handleGoogleLogin = async () => {
@@ -8,7 +10,23 @@ function Login() {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log("✅ Usuario logueado:", user);
+
+      // 🔒 Referencia al documento del usuario
+      const userRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(userRef);
+
+      // 🆕 Si no existe, lo crea
+      if (!docSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          createdAt: new Date(),
+        });
+      }
+
+      console.log("✅ Usuario logueado y guardado:", user);
     } catch (error) {
       console.error("❌ Error al iniciar sesión con Google:", error);
     }
