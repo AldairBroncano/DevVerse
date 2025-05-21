@@ -1,6 +1,5 @@
 import React from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
 import { auth, db } from "../firebase/firebaseConfig";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
@@ -11,11 +10,9 @@ function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // 🔒 Referencia al documento del usuario
       const userRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(userRef);
 
-      // 🆕 Si no existe, lo crea
       if (!docSnap.exists()) {
         await setDoc(userRef, {
           uid: user.uid,
