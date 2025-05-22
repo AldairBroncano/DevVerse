@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { auth } from "./firebase/firebaseConfig";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import Login from "./components/Login";
 import PostForm from "./components/PostForm";
 import PostList from "./components/PostList";
-import { deleteDoc, doc } from "firebase/firestore";
+import HeaderMenu from "./components/HeaderMenu";
 import { db } from "./firebase/firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
@@ -19,36 +19,28 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-  };
-
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
         <Login />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="flex flex-col items-center mb-6">
+    <div className=" min-h-screen bg-slate-900 p-6">
+      <div className="flex flex-col  items-end mb-6">
+        <HeaderMenu></HeaderMenu>
+      </div>
+      <div className="flex flex-col mb-6 ml-auto">
         <img
           src={user.photoURL}
           alt="Avatar"
           className="w-20 h-20 rounded-full mb-4"
         />
 
-        <p className="text-xl font-semibold">Bienvenido, {user.displayName}</p>
-        <p className="text-sm text-gray-600">{user.email}</p>
-
-        <button
-          onClick={handleLogout}
-          className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Cerrar sesión
-        </button>
+        <p className="text-xl text-white font-semibold">{user.displayName}</p>
+        <p className="text-sm text-white">{user.email}</p>
       </div>
 
       <PostForm

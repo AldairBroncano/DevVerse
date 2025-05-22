@@ -30,14 +30,31 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4">Bienvenido a DevVerse</h1>
-      <button
-        onClick={handleGoogleLogin}
-        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-      >
-        Iniciar sesión con Google
-      </button>
+    <div className="flex flex-col md:flex-row h-screen bg-slate-950 md:gap-x-35">
+      {/* Columna izquierda: Logo grande o imagen */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="text-center">
+          <h1 className="text-5xl font-bold text-blue-600 mb-4">DevVerse</h1>
+          <p className="text-xl text-gray-400">
+            Conéctate con tu comunidad de desarrolladores
+          </p>
+        </div>
+      </div>
+
+      {/* Columna derecha: Login */}
+      <div className="w-full md:max-w-md flex items-center justify-center px-6 pb-12 md:pb-0">
+        <div className="bg-white p-8 rounded shadow-md w-full">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Inicia sesión en DevVerse
+          </h2>
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-slate-900 transition"
+          >
+            Iniciar sesión con Google
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

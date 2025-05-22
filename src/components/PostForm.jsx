@@ -56,7 +56,7 @@ export default function PostForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 bg-white rounded-xl shadow-md space-y-4"
+      className="p-2 mt-1 bg-white rounded-xl shadow-md space-y-4 mx-auto max-w-md "
     >
       <textarea
         className="w-full border rounded-md p-2"
@@ -65,12 +65,14 @@ export default function PostForm({
         onChange={(e) => setText(e.target.value)}
         required
       />
+
       <input
         type="file"
         accept="image/*"
         ref={fileInputRef}
         onChange={(e) => setImage(e.target.files[0])}
       />
+
       <button
         type="submit"
         disabled={uploading}

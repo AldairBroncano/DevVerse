@@ -37,7 +37,7 @@ export default function PostList({ user }) {
   };
 
   return (
-    <div className="space-y-4 mt-4">
+    <div className="space-y-4 mt-4 mx-auto max-w-md">
       {posts.map((post) => (
         <div key={post.id} className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center gap-2 mb-2">
