@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { storage } from "../firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { agregarPuntos } from "../utils/agregarPuntos";
+
+// ajusta la ruta según tu proyecto
 
 export default function PostForm({
   onSubmit, // Función para crear o editar
   initialText = "", // Texto inicial (edición)
   initialImage = null, // Imagen inicial (edición)
   isEditing = false, // ¿Estamos editando?
+  user,
 }) {
   const [text, setText] = useState(initialText);
   const [image, setImage] = useState(initialImage);
@@ -37,10 +41,12 @@ export default function PostForm({
       }
 
       await onSubmit({ text, imageUrl });
+
       console.log("Post enviado correctamente");
 
       // Limpiar si es nueva publicación
       if (!isEditing) {
+        await agregarPuntos(user.uid, 10);
         setText("");
         setImage(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -76,7 +82,7 @@ export default function PostForm({
       <button
         type="submit"
         disabled={uploading}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+        className="bg-gray-600 text-white px-4 py-2 rounded-xl hover:bg-slate-900 disabled:opacity-50"
       >
         {uploading
           ? isEditing

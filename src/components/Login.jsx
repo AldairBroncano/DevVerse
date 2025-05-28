@@ -1,4 +1,3 @@
-import React from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "../firebase/firebaseConfig";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -20,6 +19,8 @@ function Login() {
           email: user.email,
           photoURL: user.photoURL,
           createdAt: new Date(),
+          puntos: 0,
+          rango: "Cobre",
         });
       }
 
@@ -43,13 +44,13 @@ function Login() {
 
       {/* Columna derecha: Login */}
       <div className="w-full md:max-w-md flex items-center justify-center px-6 pb-12 md:pb-0">
-        <div className="bg-white p-8 rounded shadow-md w-full">
+        <div className="bg-gray-300 p-8 rounded shadow-md w-full">
           <h2 className="text-2xl font-bold mb-6 text-center">
             Inicia sesión en DevVerse
           </h2>
           <button
             onClick={handleGoogleLogin}
-            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-slate-900 transition"
+            className="w-full bg-blue-700 text-white py-2 rounded-xl hover:bg-slate-900 transition"
           >
             Iniciar sesión con Google
           </button>

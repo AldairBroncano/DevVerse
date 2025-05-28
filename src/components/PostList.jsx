@@ -39,14 +39,14 @@ export default function PostList({ user }) {
   return (
     <div className="space-y-4 mt-4 mx-auto max-w-md">
       {posts.map((post) => (
-        <div key={post.id} className="bg-white p-4 rounded-xl shadow-md">
+        <div key={post.id} className="bg-gray-900 p-4 rounded-xl shadow-md">
           <div className="flex items-center gap-2 mb-2">
             <img
               src={post.userPhoto}
               alt="perfil"
               className="w-8 h-8 rounded-full"
             />
-            <span className="font-semibold">{post.userName}</span>
+            <span className="font-semibold text-white ">{post.userName}</span>
           </div>
 
           {editingPostId === post.id ? (

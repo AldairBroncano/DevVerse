@@ -22,9 +22,15 @@ export default function HeaderMenu() {
     return () => unsubscribe();
   }, []);
 
+  const [showMessage, setShowMessage] = useState(false);
+
+  const handleComingSoon = () => {
+    setShowMessage(true);
+  };
+
   return (
-    <div className="relative inline-block text-left">
-      <div className="flex items-center gap-4 bg-slate-900 p-2 rounded-md">
+    <div className="relative inline-block text-left  bg-slate-950 ">
+      <div className="flex items-center gap-4  p-2 rounded-md">
         {user && (
           <>
             <img
@@ -34,6 +40,22 @@ export default function HeaderMenu() {
             />
             <p className="text-white font-medium">{user.displayName}</p>
           </>
+        )}
+
+        {showMessage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black- bg-opacity-30 backdrop-blur-sm">
+            <div className="bg-gray-500/20 rounded-xl shadow-xl p-6 max-w-sm w-full text-center animate-fade-in-up">
+              <p className="text-black text-base font-medium mb-2">
+                Tranquilo developer.. aún estamos trabajando en ello 😉
+              </p>
+              <button
+                onClick={() => setShowMessage(false)}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-slate-900 transition"
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Botón hamburguesa */}
@@ -50,12 +72,18 @@ export default function HeaderMenu() {
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
           <ul className="py-1">
             <li>
-              <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+              <button
+                onClick={handleComingSoon}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >
                 Perfil
               </button>
             </li>
             <li>
-              <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+              <button
+                onClick={handleComingSoon}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >
                 Configuración
               </button>
             </li>

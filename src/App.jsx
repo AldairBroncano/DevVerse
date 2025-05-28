@@ -5,15 +5,32 @@ import Login from "./components/Login";
 import PostForm from "./components/PostForm";
 import PostList from "./components/PostList";
 import HeaderMenu from "./components/HeaderMenu";
+import Info from "./components/Info";
 import { db } from "./firebase/firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { agregarPuntos } from "./utils/agregarPuntos"; // ajusta la ruta según tu estructura
+import { doc, getDoc, setDoc } from "firebase/firestore"; // añade esto
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+
+        const snap = await getDoc(userRef);
+
+        if (!snap.exists()) {
+          await setDoc(userRef, {
+            nombre: currentUser.displayName || "Usuario",
+            puntos: 0,
+            rango: "Cobre",
+          });
+          console.log("Documento de usuario creado.");
+        }
+      }
     });
 
     return () => unsubscribe();
@@ -28,38 +45,47 @@ function App() {
   }
 
   return (
-    <div className=" min-h-screen bg-slate-900 p-6">
-      <div className="flex flex-col  items-end mb-6">
-        <HeaderMenu></HeaderMenu>
-      </div>
-      <div className="flex flex-col mb-6 ml-auto">
-        <img
-          src={user.photoURL}
-          alt="Avatar"
-          className="w-20 h-20 rounded-full mb-4"
-        />
-
-        <p className="text-xl text-white font-semibold">{user.displayName}</p>
-        <p className="text-sm text-white">{user.email}</p>
+    <div className="min-h-screen bg-gray-950 ">
+      <div className="w-full border-b border-gray-700 p-4">
+        <HeaderMenu />
       </div>
 
-      <PostForm
-        user={user}
-        onSubmit={async ({ text, imageUrl }) => {
-          await addDoc(collection(db, "posts"), {
-            text,
-            imageUrl,
-            createdAt: serverTimestamp(),
-            userId: user.uid,
-            userName: user.displayName,
-            userPhoto: user.photoURL,
-          });
-        }}
-      />
+      <div className="flex min-h-screen ">
+        {/* Lado izquierdo */}
+        <div className="w-1/4 bg-graye-950 p-4  border-r border-gray-700">
+          <div className="flex flex-col items-center mb-6">
+            <Info />
+          </div>
+        </div>
 
-      {/* Listado de posts */}
-      <div className="mt-8">
-        <PostList user={user} />
+        {/* Centro (contenido principal) */}
+        <div className="w-2/4 bg-gray-950 p-4  border-r border-gray-700">
+          <PostForm
+            user={user}
+            onSubmit={async ({ text, imageUrl }) => {
+              await addDoc(collection(db, "posts"), {
+                text,
+                imageUrl,
+                createdAt: serverTimestamp(),
+                userId: user.uid,
+                userName: user.displayName,
+                userPhoto: user.photoURL,
+              });
+
+              await agregarPuntos(user.uid, 10);
+            }}
+          />
+
+          {/* Listado de posts */}
+          <div className="mt-8 ">
+            <PostList user={user} />
+          </div>
+        </div>
+
+        {/* Lado derecho (opcional) */}
+        <div className="w-1/4 bg-gray-950 p-4">
+          {/* Algún contenido adicional o decorativo */}
+        </div>
       </div>
     </div>
   );
