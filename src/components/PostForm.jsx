@@ -30,6 +30,12 @@ export default function PostForm({
       console.log("Publicando post...");
       let imageUrl = "";
 
+      if (!text.trim() && !image) {
+        alert("Escribe algo o selecciona una imagen antes de publicar.");
+        setUploading(false);
+        return;
+      }
+
       if (image && typeof image !== "string") {
         console.log("Subiendo imagen...");
         const imageRef = ref(storage, `images/${Date.now()}_${image.name}`);
@@ -62,27 +68,48 @@ export default function PostForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-2 mt-1 bg-white rounded-xl shadow-md space-y-4 mx-auto max-w-md "
+      className="p-2 mt-1 bg-gray-900 rounded-l shadow-md space-y-4 mx-auto max-w-md "
     >
       <textarea
-        className="w-full border rounded-md p-2"
+        className="w-full rounded-md p-2 text-gray-50 "
         placeholder="¿Qué estás pensando?"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        required
       />
 
+      {/* Input oculto */}
       <input
         type="file"
         accept="image/*"
         ref={fileInputRef}
         onChange={(e) => setImage(e.target.files[0])}
+        className="hidden"
       />
+
+      {/* Botón con icono */}
+      <button
+        type="button"
+        className=" gap-2 px-3 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition cursor-pointer"
+        onClick={() => fileInputRef.current.click()}
+      >
+        📷
+      </button>
+
+      {/* Preview cuando hay imagen */}
+      {image && typeof image !== "string" && (
+        <div className="mt-2">
+          <img
+            src={URL.createObjectURL(image)}
+            alt="preview"
+            className="max-h-52 rounded-lg object-cover mx-auto"
+          />
+        </div>
+      )}
 
       <button
         type="submit"
         disabled={uploading}
-        className="bg-gray-600 text-white px-4 py-2 rounded-xl hover:bg-slate-900 disabled:opacity-50"
+        className="bg-gray-500 text-black px-2 py-2 rounded-xl  disabled:opacity-50"
       >
         {uploading
           ? isEditing

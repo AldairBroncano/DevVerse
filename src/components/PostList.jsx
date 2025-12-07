@@ -37,9 +37,9 @@ export default function PostList({ user }) {
   };
 
   return (
-    <div className="space-y-4 mt-4 mx-auto max-w-md">
+    <div className="space-y-10 mt-4 mx-auto max-w-md">
       {posts.map((post) => (
-        <div key={post.id} className="bg-gray-900 p-4 rounded-xl shadow-md">
+        <div key={post.id} className="bg-gray-900 p-4 rounded-l shadow-md">
           <div className="flex items-center gap-2 mb-2">
             <img
               src={post.userPhoto}
@@ -67,12 +67,12 @@ export default function PostList({ user }) {
             />
           ) : (
             <>
-              <p>{post.text}</p>
+              <p className="text-gray-200  ">{post.text}</p>
               {post.imageUrl && (
                 <img
                   src={post.imageUrl}
                   alt="Post"
-                  className="mt-2 max-h-80 object-contain rounded"
+                  className="mt-2 max-h-80 object-contain rounded text-white"
                 />
               )}
 
@@ -80,13 +80,13 @@ export default function PostList({ user }) {
                 <div className="flex gap-4 mt-2">
                   <button
                     onClick={() => setEditingPostId(post.id)}
-                    className="text-sm text-blue-500 hover:underline"
+                    className="text-sm text-gray-500 hover:underline"
                   >
                     Editar
                   </button>
                   <button
                     onClick={() => handleDelete(post.id)}
-                    className="text-sm text-red-500 hover:underline"
+                    className="text-sm text-gray-500 hover:underline"
                   >
                     Eliminar
                   </button>
