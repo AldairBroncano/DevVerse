@@ -8,7 +8,6 @@ import HeaderMenu from "./components/HeaderMenu";
 import Info from "./components/Info";
 import { db } from "./firebase/firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { agregarPuntos } from "./utils/agregarPuntos"; // ajusta la ruta según tu estructura
 import { doc, getDoc, setDoc } from "firebase/firestore"; // añade esto
 
 function App() {
@@ -71,8 +70,6 @@ function App() {
                 userName: user.displayName,
                 userPhoto: user.photoURL,
               });
-
-              await agregarPuntos(user.uid, 10);
             }}
           />
 

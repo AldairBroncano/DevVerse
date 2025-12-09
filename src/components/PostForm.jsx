@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { storage } from "../firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { agregarPuntos } from "../utils/agregarPuntos";
+import { PhotoIcon } from "@heroicons/react/24/solid";
 
 // ajusta la ruta según tu proyecto
 
@@ -52,7 +53,7 @@ export default function PostForm({
 
       // Limpiar si es nueva publicación
       if (!isEditing) {
-        await agregarPuntos(user.uid, 10);
+        await agregarPuntos(user.uid, 1);
         setText("");
         setImage(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -86,14 +87,32 @@ export default function PostForm({
         className="hidden"
       />
 
-      {/* Botón con icono */}
-      <button
-        type="button"
-        className=" gap-2 px-3 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition cursor-pointer"
-        onClick={() => fileInputRef.current.click()}
-      >
-        📷
-      </button>
+      {/* Contenedor para los botones */}
+      <div className="flex justify-between items-center w-full">
+        {/* Botón con icono */}
+        <button
+          type="button"
+          className="p-1 rounded-2xl hover:bg-blue-950 transition"
+          onClick={() => fileInputRef.current.click()}
+        >
+          <PhotoIcon className="h-6 w-6 text-blue-600" />
+        </button>
+
+        {/* Botón publicar */}
+        <button
+          type="submit"
+          disabled={uploading}
+          className="bg-gray-600 text-gray-950 font-semibold px-3 py-2 rounded-3xl disabled:opacity-50 hover:bg-gray-500"
+        >
+          {uploading
+            ? isEditing
+              ? "Guardando..."
+              : "Publicando..."
+            : isEditing
+            ? "Guardar cambios"
+            : "Publicar"}
+        </button>
+      </div>
 
       {/* Preview cuando hay imagen */}
       {image && typeof image !== "string" && (
@@ -105,20 +124,6 @@ export default function PostForm({
           />
         </div>
       )}
-
-      <button
-        type="submit"
-        disabled={uploading}
-        className="bg-gray-500 text-black px-2 py-2 rounded-xl  disabled:opacity-50"
-      >
-        {uploading
-          ? isEditing
-            ? "Guardando..."
-            : "Publicando..."
-          : isEditing
-          ? "Guardar cambios"
-          : "Publicar"}
-      </button>
     </form>
   );
 }

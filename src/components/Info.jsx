@@ -30,8 +30,9 @@ export default function Info() {
   if (!datosUsuario) return null;
 
   return (
-    <div className="p-4 bg-gray-100 rounded-xl shadow w-full max-w-xs">
+    <div className="p-4  rounded-xl shadow w-full max-w-xs">
       {/* Avatar y nombre */}
+      {/*{" "}
       <div className="flex items-center gap-3 mb-4">
         {user && (
           <>
@@ -40,15 +41,17 @@ export default function Info() {
               alt="Avatar"
               className="w-12 h-12 rounded-full object-cover"
             />
-            <p className="text-gray-800 font-semibold">{user.displayName}</p>
+            <p className="text-gray-100 font-semibold">{user.displayName}</p>
           </>
         )}
       </div>
-
+      */}
       {/* Progreso y rango */}
       {datosUsuario && (
         <>
-          <h2 className="text-lg font-semibold mb-2">Tu progreso</h2>
+          <h2 className="text-lg text-gray-200 font-semibold mb-2">
+            Tu progreso
+          </h2>
           <div className="flex items-center gap-3">
             <div className="text-2xl">
               {datosUsuario.rango === "Oro" && "🥇"}
@@ -58,10 +61,10 @@ export default function Info() {
               {datosUsuario.rango === "Diamante" && "💎"}
             </div>
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-200">
                 Rango: <strong>{datosUsuario.rango}</strong>
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-200">
                 Puntos: {datosUsuario.puntos}
               </p>
             </div>

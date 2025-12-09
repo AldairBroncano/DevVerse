@@ -10,8 +10,8 @@ export const agregarPuntos = async (uid, puntosExtra) => {
     const nuevosPuntos = (data.puntos || 0) + puntosExtra;
 
     let nuevoRango = "Cobre";
-    if (nuevosPuntos >= 100) nuevoRango = "Oro";
-    else if (nuevosPuntos >= 50) nuevoRango = "Plata";
+    if (nuevosPuntos >= 300) nuevoRango = "Oro";
+    else if (nuevosPuntos >= 100) nuevoRango = "Plata";
 
     await updateDoc(userRef, {
       puntos: nuevosPuntos,

@@ -77,7 +77,7 @@ export default function PostList({ user }) {
               )}
 
               {user?.uid === post.userId && (
-                <div className="flex gap-4 mt-2">
+                <div className="flex gap-4 mt-10">
                   <button
                     onClick={() => setEditingPostId(post.id)}
                     className="text-sm text-gray-500 hover:underline"
