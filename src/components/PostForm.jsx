@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { storage } from "../firebase/firebaseConfig";
+import { storage, db } from "../firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { agregarPuntos } from "../utils/agregarPuntos";
 import { PhotoIcon } from "@heroicons/react/24/solid";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 // ajusta la ruta según tu proyecto
 
@@ -38,20 +39,25 @@ export default function PostForm({
       }
 
       if (image && typeof image !== "string") {
-        console.log("Subiendo imagen...");
         const imageRef = ref(storage, `images/${Date.now()}_${image.name}`);
         await uploadBytes(imageRef, image);
         imageUrl = await getDownloadURL(imageRef);
-        console.log("Imagen subida:", imageUrl);
       } else if (typeof image === "string") {
-        imageUrl = image; // Imagen ya subida (modo edición)
+        imageUrl = image;
       }
 
-      await onSubmit({ text, imageUrl });
+      await addDoc(collection(db, "posts"), {
+        text,
+        imageUrl,
+        userId: user.uid,
+        userName: user.displayName,
+        userPhoto: user.photoURL,
+        createdAt: serverTimestamp(),
+        likes: [],
+      });
 
-      console.log("Post enviado correctamente");
+      console.log("Post enviado correctamente a Firestore");
 
-      // Limpiar si es nueva publicación
       if (!isEditing) {
         await agregarPuntos(user.uid, 1);
         setText("");

@@ -30,7 +30,7 @@ export default function Info() {
   if (!datosUsuario) return null;
 
   return (
-    <div className="p-4  rounded-xl shadow w-full max-w-xs">
+    <div className="p-4  rounded-xl shadow w-full max-w-sm mx-auto">
       {/* Avatar y nombre */}
       {/*{" "}
       <div className="flex items-center gap-3 mb-4">
