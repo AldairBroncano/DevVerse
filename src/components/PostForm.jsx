@@ -46,6 +46,12 @@ export default function PostForm({
         imageUrl = image;
       }
 
+      if (isEditing) {
+        await onSubmit({ text, imageUrl }); // <-- ACTUALIZA, NO CREA
+        setUploading(false);
+        return;
+      }
+
       await addDoc(collection(db, "posts"), {
         text,
         imageUrl,
@@ -58,12 +64,10 @@ export default function PostForm({
 
       console.log("Post enviado correctamente a Firestore");
 
-      if (!isEditing) {
-        await agregarPuntos(user.uid, 1);
-        setText("");
-        setImage(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-      }
+      await agregarPuntos(user.uid, 1);
+      setText("");
+      setImage(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Error:", error);
       alert("Ocurrió un error. Revisa la consola.");
