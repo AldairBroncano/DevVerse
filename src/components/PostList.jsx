@@ -23,6 +23,8 @@ export default function PostList({ user }) {
   const [commentText, setCommentText] = useState({});
   const [showComments, setShowComments] = useState({});
   const [openMenu, setOpenMenu] = useState({});
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
@@ -36,6 +38,10 @@ export default function PostList({ user }) {
 
     return () => unsubscribe(); // Cleanup
   }, []);
+
+  const handleComingSoon = () => {
+    setShowMessage(true);
+  };
 
   const handleDelete = async (id) => {
     if (confirm("¿Seguro que deseas eliminar esta publicación?")) {
@@ -88,6 +94,14 @@ export default function PostList({ user }) {
     }));
   };
 
+  const handleDeleteComment = async (postId, comment) => {
+    const postRef = doc(db, "posts", postId);
+
+    await updateDoc(postRef, {
+      comments: arrayRemove(comment),
+    });
+  };
+
   const toggleMenu = (postId) => {
     setOpenMenu((prev) => ({
       ...prev,
@@ -99,6 +113,7 @@ export default function PostList({ user }) {
     <div className="space-y-10 mt-4 mx-auto max-w-md">
       {posts.map((post) => (
         <div key={post.id} className="bg-gray-900 p-4 rounded-xl shadow-md">
+          {/* HEADER */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <img
@@ -106,12 +121,12 @@ export default function PostList({ user }) {
                 alt="perfil"
                 className="w-8 h-8 rounded-full"
               />
-              <span className="font-semibold text-white  text-sm ">
+              <span className="font-semibold text-white text-sm">
                 {post.userName}
               </span>
             </div>
 
-            {/* 3 PUNTITOS SOLO SI ES EL DUEÑO */}
+            {/* MENU POST */}
             {user?.uid === post.userId && (
               <div className="relative">
                 <button
@@ -121,7 +136,6 @@ export default function PostList({ user }) {
                   <EllipsisHorizontalIcon />
                 </button>
 
-                {/* MENU */}
                 {openMenu[post.id] && (
                   <div className="absolute right-0 mt-2 bg-gray-800 p-2 rounded shadow-lg w-28 space-y-2 text-sm">
                     <button
@@ -149,6 +163,7 @@ export default function PostList({ user }) {
             )}
           </div>
 
+          {/* CONTENIDO */}
           {editingPostId === post.id ? (
             <PostForm
               user={user}
@@ -167,19 +182,21 @@ export default function PostList({ user }) {
             />
           ) : (
             <>
-              <p className="text-gray-200  ">{post.text}</p>
+              <p className="text-gray-200">{post.text}</p>
+
               {post.imageUrl && (
                 <img
                   src={post.imageUrl}
                   alt="Post"
-                  className="mt-2 max-h-80 object-contain rounded text-white"
+                  className="mt-2 max-h-80 object-contain rounded"
                 />
               )}
 
+              {/* LIKES Y COMENTARIOS */}
               <div className="flex items-center gap-6 mt-4">
                 <button
                   onClick={() => toggleLike(post.id, post.likes || [])}
-                  className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition text-sm"
+                  className="flex items-center gap-1 text-gray-400 hover:text-red-400 text-sm"
                 >
                   {post.likes?.includes(user?.uid) ? "❤️" : "🤍"}
                   <span>{post.likes?.length || 0}</span>
@@ -193,9 +210,9 @@ export default function PostList({ user }) {
                 </button>
               </div>
 
+              {/* COMENTARIOS */}
               {showComments[post.id] && (
                 <>
-                  {/* FORMULARIO DE COMENTAR PARA CUALQUIER USUARIO LOGUEADO */}
                   {user && (
                     <form
                       onSubmit={(e) => handleAddComment(e, post.id)}
@@ -217,25 +234,72 @@ export default function PostList({ user }) {
                     </form>
                   )}
 
-                  {/* LISTA DE COMENTARIOS */}
-                  {post.comments && post.comments.length > 0 && (
-                    <div className="mt-2 space-y-1 text-gray-300 text-sm">
-                      {post.comments.map((c, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <img src={c.photo} className="w-6 h-6 rounded-full" />
-                          <p>
-                            <strong>{c.name}</strong>: {c.text}
-                          </p>
-                        </div>
-                      ))}
+                  {post.comments?.map((c, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start justify-between gap-2 bg-gray-900 p-3 rounded-md"
+                    >
+                      <div className="flex items-center gap-2">
+                        <img src={c.photo} className="w-6 h-6 rounded-full" />
+                        <p className="text-sm text-gray-300">
+                          <strong>{c.name}</strong>: {c.text}
+                        </p>
+                      </div>
+
+                      {user?.uid === c.uid && (
+                        <button
+                          onClick={() =>
+                            setCommentToDelete({
+                              postId: post.id,
+                              comment: c,
+                            })
+                          }
+                          className="text-gray-400 hover:text-white text-xs"
+                        >
+                          •••
+                        </button>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </>
               )}
             </>
           )}
         </div>
       ))}
+
+      {/* MODAL ELIMINAR COMENTARIO */}
+      {commentToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-gray-900 rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
+            <p className="text-gray-100 text-sm font-medium mb-4">
+              ¿Eliminar este comentario?
+            </p>
+
+            <div className="flex justify-center gap-6">
+              <button
+                onClick={async () => {
+                  await handleDeleteComment(
+                    commentToDelete.postId,
+                    commentToDelete.comment
+                  );
+                  setCommentToDelete(null);
+                }}
+                className="text-red-400 hover:text-red-300 text-xs "
+              >
+                Eliminar
+              </button>
+
+              <button
+                onClick={() => setCommentToDelete(null)}
+                className="text-gray-400 hover:text-gray-300 text-xs"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
