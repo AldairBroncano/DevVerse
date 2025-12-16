@@ -79,7 +79,7 @@ export default function PostForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-2 mt-1 bg-gray-900 rounded-l shadow-md space-y-4 mx-auto max-w-md "
+      className="space-y-8 p-2 mt-4 bg-gray-900 rounded-l shadow-md  mx-auto max-w-xl lg:max-w-2xl "
     >
       <textarea
         className="w-full rounded-md p-2 text-gray-50 "

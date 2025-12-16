@@ -28,6 +28,7 @@ export default function PostList({ user }) {
 
   useEffect(() => {
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newPosts = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -39,9 +40,17 @@ export default function PostList({ user }) {
     return () => unsubscribe(); // Cleanup
   }, []);
 
-  const handleComingSoon = () => {
-    setShowMessage(true);
-  };
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenMenu({});
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const handleDelete = async (id) => {
     if (confirm("¿Seguro que deseas eliminar esta publicación?")) {
@@ -126,7 +135,7 @@ export default function PostList({ user }) {
                 alt="perfil"
                 className="w-7 h-7 sm:h-8 sm:w-8 rounded-full"
               />
-              <span className="font-semibold text-white text-xs sm:text-sm">
+              <span className="font-semibold text-white text-xs sm:text-sm line-clamp-2">
                 {post.userName}
               </span>
             </div>
@@ -135,7 +144,11 @@ export default function PostList({ user }) {
             {user?.uid === post.userId && (
               <div className="relative">
                 <button
-                  onClick={() => toggleMenu(post.id)}
+                  aria-label="Opciones del post"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMenu(post.id);
+                  }}
                   className="w-6 h-6 text-gray-400 hover:text-white"
                 >
                   <EllipsisHorizontalIcon />
@@ -187,7 +200,7 @@ export default function PostList({ user }) {
             />
           ) : (
             <>
-              <p className="text-gray-200 text-sm sm:text-base break-words">
+              <p className="text-gray-200 text-sm sm:text-base break-words line-clamp-5">
                 {post.text}
               </p>
 
@@ -211,7 +224,7 @@ export default function PostList({ user }) {
 
                 <button
                   onClick={() => toggleComments(post.id)}
-                  className="flex items-center gap-1 text-gray-400 hover:text-gray-200"
+                  className="flex items-center gap-1 text-gray-400 hover:text-gray-200 animate-fade-in"
                 >
                   💬 {post.comments?.length || 0}
                 </button>
@@ -219,7 +232,7 @@ export default function PostList({ user }) {
 
               {/* COMENTARIOS */}
               {showComments[post.id] && (
-                <>
+                <div className="transition-all duration-200 ease-in-out origin-top animate-fade-in">
                   {user && (
                     <form
                       onSubmit={(e) => handleAddComment(e, post.id)}
@@ -237,40 +250,45 @@ export default function PostList({ user }) {
                           })
                         }
                       />
-                      <button className="text-xs sm:text-sm text-gray-300 ">
+                      <button
+                        disabled={!commentText[post.id]?.trim()}
+                        className="text-xs sm:text-sm text-gray-300 disabled:opacity-40 "
+                      >
                         Enviar
                       </button>
                     </form>
                   )}
 
-                  {post.comments?.map((c, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gray-900 p-3 rounded-md"
-                    >
-                      <div className="flex items-center gap-2">
-                        <img src={c.photo} className="w-6 h-6 rounded-full" />
-                        <p className="flex-1 text-xs sm:text-sm text-gray-300 break-words">
-                          <strong>{c.name}</strong>: {c.text}
-                        </p>
-                      </div>
+                  {post.comments?.length > 0 &&
+                    post.comments?.map((c, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gray-900 p-3 rounded-md"
+                      >
+                        <div className="flex items-center gap-2">
+                          <img src={c.photo} className="w-6 h-6 rounded-full" />
+                          <p className="flex-1 text-xs sm:text-sm text-gray-300 break-words">
+                            <strong>{c.name}</strong>: {c.text}
+                          </p>
+                        </div>
 
-                      {user?.uid === c.uid && (
-                        <button
-                          onClick={() =>
-                            setCommentToDelete({
-                              postId: post.id,
-                              comment: c,
-                            })
-                          }
-                          className="self-end sm:self-auto text-gray-400 hover:text-white text-xs"
-                        >
-                          •••
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </>
+                        {user?.uid === c.uid && (
+                          <button
+                            aria-label="Eliminar comentario"
+                            onClick={() =>
+                              setCommentToDelete({
+                                postId: post.id,
+                                comment: c,
+                              })
+                            }
+                            className="self-end sm:self-auto text-gray-400 hover:text-white text-xs"
+                          >
+                            •••
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
               )}
             </>
           )}
