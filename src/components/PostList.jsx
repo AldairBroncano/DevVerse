@@ -110,18 +110,23 @@ export default function PostList({ user }) {
   };
 
   return (
-    <div className="space-y-10 mt-4 mx-auto max-w-md">
+    //space-y-8 mt-4 mx-auto px-2 sm:px-0 max-w-xl lg:max-w-2xl
+
+    <div className="space-y-8 mt-4 mx-auto px-2 sm:px-0 max-w-xl lg:max-w-2xl">
       {posts.map((post) => (
-        <div key={post.id} className="bg-gray-900 p-4 rounded-xl shadow-md">
+        <div
+          key={post.id}
+          className="bg-gray-900 p-3 sm:p-4 rounded-xl shadow-md"
+        >
           {/* HEADER */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <img
                 src={post.userPhoto}
                 alt="perfil"
-                className="w-8 h-8 rounded-full"
+                className="w-7 h-7 sm:h-8 sm:w-8 rounded-full"
               />
-              <span className="font-semibold text-white text-sm">
+              <span className="font-semibold text-white text-xs sm:text-sm">
                 {post.userName}
               </span>
             </div>
@@ -182,21 +187,23 @@ export default function PostList({ user }) {
             />
           ) : (
             <>
-              <p className="text-gray-200">{post.text}</p>
+              <p className="text-gray-200 text-sm sm:text-base break-words">
+                {post.text}
+              </p>
 
               {post.imageUrl && (
                 <img
                   src={post.imageUrl}
                   alt="Post"
-                  className="mt-2 max-h-80 object-contain rounded"
+                  className="mt-2 w-full max-h-64 sm:max-h-80 object-contain rounded"
                 />
               )}
 
               {/* LIKES Y COMENTARIOS */}
-              <div className="flex items-center gap-6 mt-4">
+              <div className="flex items-center gap-6 mt-4 text-xs sm:text-sm">
                 <button
                   onClick={() => toggleLike(post.id, post.likes || [])}
-                  className="flex items-center gap-1 text-gray-400 hover:text-red-400 text-sm"
+                  className="flex items-center gap-1 text-gray-400 hover:text-red-400"
                 >
                   {post.likes?.includes(user?.uid) ? "❤️" : "🤍"}
                   <span>{post.likes?.length || 0}</span>
@@ -204,7 +211,7 @@ export default function PostList({ user }) {
 
                 <button
                   onClick={() => toggleComments(post.id)}
-                  className="text-gray-400 hover:text-gray-200 text-sm"
+                  className="flex items-center gap-1 text-gray-400 hover:text-gray-200"
                 >
                   💬 {post.comments?.length || 0}
                 </button>
@@ -216,12 +223,12 @@ export default function PostList({ user }) {
                   {user && (
                     <form
                       onSubmit={(e) => handleAddComment(e, post.id)}
-                      className="mt-2 flex gap-2"
+                      className="mt-3 flex flex-col sm:flex-row gap-2"
                     >
                       <input
                         type="text"
                         placeholder="Escribe un comentario..."
-                        className="flex-1 p-1 rounded bg-gray-800 text-gray-200 text-sm"
+                        className="flex-1 p-2 rounded bg-gray-800 text-gray-200 text-xs sm:text-sm"
                         value={commentText[post.id] || ""}
                         onChange={(e) =>
                           setCommentText({
@@ -230,18 +237,20 @@ export default function PostList({ user }) {
                           })
                         }
                       />
-                      <button className="text-sm text-gray-300">Enviar</button>
+                      <button className="text-xs sm:text-sm text-gray-300 ">
+                        Enviar
+                      </button>
                     </form>
                   )}
 
                   {post.comments?.map((c, index) => (
                     <div
                       key={index}
-                      className="flex items-start justify-between gap-2 bg-gray-900 p-3 rounded-md"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gray-900 p-3 rounded-md"
                     >
                       <div className="flex items-center gap-2">
                         <img src={c.photo} className="w-6 h-6 rounded-full" />
-                        <p className="text-sm text-gray-300">
+                        <p className="flex-1 text-xs sm:text-sm text-gray-300 break-words">
                           <strong>{c.name}</strong>: {c.text}
                         </p>
                       </div>
@@ -254,7 +263,7 @@ export default function PostList({ user }) {
                               comment: c,
                             })
                           }
-                          className="text-gray-400 hover:text-white text-xs"
+                          className="self-end sm:self-auto text-gray-400 hover:text-white text-xs"
                         >
                           •••
                         </button>
@@ -272,7 +281,7 @@ export default function PostList({ user }) {
       {commentToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-gray-900 rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
-            <p className="text-gray-100 text-sm font-medium mb-4">
+            <p className="text-gray-100 text-xs sm:text-sm font-medium mb-4">
               ¿Eliminar este comentario?
             </p>
 
